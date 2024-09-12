@@ -1,0 +1,6 @@
+dist/
+easypde.egg-info/
+element_stiffness_matrices/
+intermediates/
+output/
+backups/
