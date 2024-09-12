@@ -8,7 +8,7 @@ import itertools
 import os
 import pyvista
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 def get_M_n(d:int, n:int, E=1, nu=1/3):
     return E / (1-(n - 1) * nu - (d - n) * n / (1 - max(0, d - n - 1) * nu) * nu ** 2)

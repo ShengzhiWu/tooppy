@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="tooppy",
-    version="1.0.0",
+    version="1.0.1",
     author="Shengzhi Wu",
     author_email="e1124755@u.nus.edu",
     description="A topological optimization library for python 3",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
-    install_requires=['numpy', 'scipy', 'time', 'pyvista', 'sympy', 'itertools', 'os'],
+    install_requires=['numpy', 'scipy', 'pyvista', 'sympy'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
