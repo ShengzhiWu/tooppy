@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.sparse import coo_matrix
-from scipy.sparse.linalg import spsolve
+from scipy.sparse.linalg import spsolve  # , cg, minres
 # import pyamg
 import time
 from sympy import symbols, Matrix, diff, expand
@@ -8,7 +8,7 @@ import itertools
 import os
 import pyvista
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 def get_M_n(d:int, n:int, E=1, nu=1/3):
     return E / (1-(n - 1) * nu - (d - n) * n / (1 - max(0, d - n - 1) * nu) * nu ** 2)
@@ -132,6 +132,9 @@ def solve(get_fixed,
     # Degrees of freedom (DOFs)
     dof = len(resolution) * np.prod([e + 1 for e in resolution])
     print('degrees of freedom =', dof)
+
+    if type(penal) in [int, float]:
+        penal = [penal] * 2
     
     # Set mask
     if not get_mask is None:
@@ -139,7 +142,7 @@ def solve(get_fixed,
         slices = [slice(0, e) for e in resolution]
         coordinates = np.mgrid[slices]
         coordinates = [e.flatten() + 0.5 for e in coordinates]
-        mask = get_mask(resolution, np.prod(resolution), coordinates)
+        mask = get_mask(resolution, np.prod(resolution), np.array(coordinates))
     else:
         mask = None
     
@@ -192,7 +195,7 @@ def solve(get_fixed,
     # Calculate location of vertices
     slices = [slice(0, e + 1) for e in resolution]
     coordinates = np.mgrid[slices]
-    coordinates = [e.flatten() for e in coordinates]
+    coordinates = np.array([e.flatten() for e in coordinates])
 
     # Boundary Conditions and support
     fixed = get_fixed(resolution, dof, coordinates)
@@ -212,13 +215,17 @@ def solve(get_fixed,
     loop = 0
     change = 1
     g = 0  # A constraint or a measure related to the volume of the design
+    penal_iter = iter(np.linspace(penal[0], penal[1], iterations))
     while change > change_threshold and loop < iterations:
         loop += 1
+
+        penal_in_iteration = next(penal_iter)
+        print(penal_in_iteration)
         
         t_1 = time.time()
 
         # Setup and solve FE problem
-        sK = ((KE.flatten()[np.newaxis]).T*(Emin+(xPhys)**penal*(Emax-Emin))).flatten(order = 'F')
+        sK = ((KE.flatten()[np.newaxis]).T*(Emin+(xPhys)**penal_in_iteration*(Emax-Emin))).flatten(order = 'F')
         K  =  coo_matrix((sK, (iK, jK)), shape = (dof, dof)).tocsc()
         
         # Remove constrained dofs from matrix
@@ -242,8 +249,8 @@ def solve(get_fixed,
         for e in u.T:
             u_element = e[edofMat].reshape(np.prod(resolution), dof_per_element)
             ce = np.maximum(ce, (np.dot(u_element, KE) * u_element).sum(1))  # Compliance energy
-        obj = ((Emin + xPhys ** penal * (Emax - Emin)) * ce ).sum()
-        dc = (-penal * xPhys ** (penal - 1) * (Emax - Emin)) * ce  # Ignore contribution of d ce /d obj
+        obj = ((Emin + xPhys ** penal_in_iteration * (Emax - Emin)) * ce ).sum()
+        dc = (-penal_in_iteration * xPhys ** (penal_in_iteration - 1) * (Emax - Emin)) * ce  # Ignore contribution of d ce /d obj
         dv = np.ones(np.prod(resolution))
         
         # Sensitivity filtering:
