@@ -4,3 +4,5 @@ element_stiffness_matrices/
 intermediates/
 output/
 backups/
+build/
+tooppy.egg-info/
