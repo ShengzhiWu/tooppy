@@ -19,7 +19,7 @@ pip install tooppy
 
 In this example, we seek a structure with both ends fixed (vertically fixed, horizontally slidable), and a vertical force applied at the center as the load. See `tests\test_2d.py`.
 
-<img src="README.assets/result_2d.png" alt="result_2d" style="zoom:50%;" />
+<img src="README.assets/result_2d_0.png" alt="result_2d" style="zoom:50%;" />
 
 ### 3D
 
@@ -42,6 +42,16 @@ Another powerful feature of tooppy is the mask. Users can specify certain region
 This example has the same configuration as the first 3D example, except that material cannot be placed within the specified four cylindrical regions. See `tests\test_3d_mask.py`.
 
 <img src="README.assets/result_3d_2.png" alt="result_3d_2" style="zoom:67%;" />
+
+## More Interesting Examples
+
+### Tree
+
+Fixing the midpoint of one side of the rectangle and applying uniform pressure on the opposite side, the optimization will result in a tree-like structure. See `tests\test_2d _tree.py`.
+
+
+
+![result_2d_1](README.assets/result_2d_1.png)
 
 ## Element Stiffness Matrix Cache
 
