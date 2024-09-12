@@ -47,7 +47,7 @@ This example has the same configuration as the first 3D example, except that mat
 
 ### Tree
 
-Fixing the midpoint of one side of the rectangle and applying uniform pressure on the opposite side, the optimization will result in a tree-like structure. See `tests\test_2d _tree.py`.
+Fixing the midpoint of one side of a rectangle and applying uniform pressure on the opposite side, the optimization will result in a tree-like structure. See `tests\test_2d _tree.py`.
 
 
 
