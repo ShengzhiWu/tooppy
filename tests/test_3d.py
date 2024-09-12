@@ -3,8 +3,6 @@ import os
 from tooppy import solve, get_indices_on_face, visualize_3d_array
 
 def get_fixed(resolution, ndof, coordinates):  # Constrains
-    # dofs = np.arange(ndof)
-
     fixed = [ndof - 1]  # Fix the 4 corners on Z direction
     # fixed = [ndof - 3, ndof - 2, ndof - 1]  # Fix the 4 corners completely
 
