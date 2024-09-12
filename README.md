@@ -1,5 +1,9 @@
 # tooppy
-tooppy is a powerful **to**pological **op**timization library for **py**thon 3.
+tooppy is a powerful [**to**pological **op**timization](https://en.wikipedia.org/wiki/Topology_optimization) library for **py**thon 3.
+
+What is topological optimization? Consider designing a part using a material, aluminum alloy for instance, where we want its weight not to exceed a given value, while maximizing its strength. The optimal solution is often similar to a truss structure, containing a series of holes. If we have no prior knowledge about the structure, such as starting with a simple rectangular block, the optimization process will inevitably involve changes in the topology. This type of optimization is called topology optimization. Topology optimization is useful in aerospace engineering, where structures often need to be strong while minimizing weight.
+
+If you're a visual artist rather than an engineer, you can still enjoy this library, as the results of topology optimization often yield beautiful, organic structures. You can find many similar forms in nature, such as animal skeletons. I believe you can draw interesting inspiration from the rich variety of the results.
 
 In principle, tooppy is capable of handling topology optimization problems in any dimension, not just the usual 2D and 3D cases.
 
