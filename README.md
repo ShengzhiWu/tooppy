@@ -1,4 +1,7 @@
 # tooppy
+
+[中文版](README_zh-cn.md)
+
 tooppy is a powerful [**to**pological **op**timization](https://en.wikipedia.org/wiki/Topology_optimization) library for **py**thon 3.
 
 What is topological optimization? Consider designing a part using a material, aluminum alloy for instance, where we want its weight not to exceed a given value, while maximizing its strength. The optimal solution is often similar to a truss structure, containing a series of holes. If we have no prior knowledge about the structure, such as starting with a simple rectangular block, the optimization process will inevitably involve changes in the [topology](https://en.wikipedia.org/wiki/Topology). This type of optimization is called topology optimization. Topology optimization is useful in aerospace engineering, where structures often need to be strong while minimizing weight.
@@ -69,6 +72,6 @@ Note that since the `resolution` passed into `get_fixed`, `get_load`, and `get_m
 
 ## Element Stiffness Matrix Cache
 
-The element stiffness matrix is automatically cached in`element_stiffness_matrices/` on the first time you solve a problem by default. In subsequent calculations, this matrix will be automatically loaded to save time. When you use new materials (with new Young's modulus `E` or Poisson's ratio `nu`), or calculate problems in different dimensions, the matrix needs to be recalculated.
+The element stiffness matrix is automatically cached in`element_stiffness_matrices/` on the first time you solve a problem by default. In subsequent calculations, this matrix will be automatically loaded to save time. When you use new materials (with new [Young's modulus](https://en.wikipedia.org/wiki/Young%27s_modulus) `E` or [Poisson's ratio](https://en.wikipedia.org/wiki/Poisson%27s_ratio) `nu`), or calculate problems in different dimensions, the matrix needs to be recalculated.
 
 You can disable this behavior by using the `skip_calculating_element_stiffness_matrix_if_exists=False` option. You can also use the `element_stiffness_matrix_file_dir` option to specify the location where the matrix is stored or to be stored.
