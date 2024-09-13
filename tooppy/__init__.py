@@ -117,6 +117,7 @@ def solve(get_fixed,
           iterations=20,
           get_mask=None,
           change_threshold=0,
+          initial_noise_strength=0,
           intermediate_results_saving_path=None,
           element_stiffness_matrix_file_dir='./element_stiffness_matrices/',
           skip_calculating_element_stiffness_matrix_if_exists=True):
@@ -148,6 +149,8 @@ def solve(get_fixed,
     
     # Allocate design variables (as array), initialize and allocate sens.
     x = volfrac / (1 if mask is None else np.mean(mask)) * np.ones(np.prod(resolution), dtype=float)
+    if initial_noise_strength != 0:
+        x += (np.random.rand(np.prod(resolution)) * 2 - 1) * initial_noise_strength
     if not mask is None:
         x[np.logical_not(mask)] = 0
     xold = x.copy()
@@ -220,7 +223,6 @@ def solve(get_fixed,
         loop += 1
 
         penal_in_iteration = next(penal_iter)
-        print(penal_in_iteration)
         
         t_1 = time.time()
 
