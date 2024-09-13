@@ -289,13 +289,6 @@ def solve(get_fixed,
     
     return xPhys.reshape(resolution)
 
-def get_indices_on_face(resolution, axis, start=False, end=False):
-    indices = [range(e) for e in resolution]
-    indices[axis] = ([0] if start else []) + ([resolution[axis] - 1] if end else [])
-    indices = np.array(list(itertools.product(*indices)))
-    indices *= [int(np.prod(resolution[i:])) for i in range(1, len(resolution) + 1)]
-    return np.sum(indices, axis=-1)
-
 def get_indices_on_boundary_elements(resolution, axis_selection):
     indices = []
     for a, b in zip(resolution, axis_selection):
@@ -306,6 +299,12 @@ def get_indices_on_boundary_elements(resolution, axis_selection):
     indices = np.array(list(itertools.product(*indices)))
     indices *= [int(np.prod(resolution[i:])) for i in range(1, len(resolution) + 1)]
     return np.sum(indices, axis=-1)
+
+def get_indices_on_face(resolution, axis, start=False, end=False):
+    axis_selection = [None] * len(resolution)
+    axis_selection[axis] = [start, end]
+    
+    return get_indices_on_boundary_elements(resolution, axis_selection)
 
 def mirrow_first_axis(a):
     shape = list(a.shape)
