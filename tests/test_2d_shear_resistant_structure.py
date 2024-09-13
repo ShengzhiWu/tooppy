@@ -2,20 +2,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import os
-from tooppy import solve
+from tooppy import solve, get_indices_on_boundary_elements
 
 def get_fixed(resolution, ndof, coordinates):  # Constrains
-    fixed = [(resolution[0] // 2 * (resolution[1] + 1) + resolution[1]) * 2 + 1]  # fixed
+    indices = get_indices_on_boundary_elements(np.array(resolution) + 1, [None, [False, True]])
+    indices = indices
+    fixed = np.concatenate([indices * 2, indices * 2 + 1])  # fixed
     return fixed
 
 def get_load(resolution, ndof, coordinates):  # Load
     f = np.zeros(ndof)
-    for i in range(resolution[1] + 1):
-        f[(i * (resolution[1] + 1)) * 2 + 1] = 1
+    indices = get_indices_on_boundary_elements(np.array(resolution) + 1, [None, [True, False]])
+    f[indices * 2 + 0] = 1
     return f
 
 # Default input parameters
-resolution = [200, 200]
+resolution = [80, 100]
 volfrac = 0.2  # Volume fraction
 rmin = 1.5  # Larger values for more smooth results.
 penal = [1.5, 3.5]

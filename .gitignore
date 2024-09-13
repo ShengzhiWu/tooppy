@@ -6,3 +6,4 @@ output/
 backups/
 build/
 tooppy.egg-info/
+experiments/

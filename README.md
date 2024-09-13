@@ -45,13 +45,13 @@ This example has the same configuration as the first 3D example, except that mat
 
 ## More Interesting Examples
 
-### Tree
+### Compression / Shear / Bending Resistant Structures
 
-Fixing the midpoint of one side of a rectangle and applying uniform pressure on the opposite side, the optimization will result in a tree-like structure. See `tests\test_2d _tree.py`.
+We aim to find 2D structures that are highly resistant to compression, shear or bending.  We completely fix the lower end of a rectangular region, then apply pressure (vertical), shear force (horizontal), or bending force (rotational) to the upper end. See `tests\test_2d_compression_resistant_structure.py`, `tests\test_2d_shear_resistant_structure.py` and `tests\test_2d_bending_resistant_structure.py`.  The optimized structure is shown in the figure below.
 
+![result_2d_csb_resistant](README.assets/result_2d_csb_resistant.png)
 
-
-![result_2d_1](README.assets/result_2d_1.png)
+We notice that in the first case, it tries to use arch-like or catenary structures to increase stiffness under pressure, while also attempting to use tree-like structures to save material. You can see similar structures in Antoni Gaudí's famous masonry building, the [Sagrada Família](https://en.wikipedia.org/wiki/Sagrada_Fam%C3%ADlia).
 
 ## Element Stiffness Matrix Cache
 
