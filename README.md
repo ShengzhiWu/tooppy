@@ -53,6 +53,12 @@ We aim to find 2D structures that are highly resistant to compression, shear or 
 
 We notice that in the first case, it tries to use arch-like or catenary structures to increase stiffness under pressure, while also attempting to use tree-like structures to save material. You can see similar structures in Antoni Gaudí's famous masonry building, the [Sagrada Família](https://en.wikipedia.org/wiki/Sagrada_Fam%C3%ADlia).
 
+## The Numbering of Vertices and Elements
+
+The finite element method (FEM) solution domain is composed of a series of square/cubic/hypercubic elements with edge lengths of 1, and the number of elements is the product of the entries in the `resolution`. The vertices are the endpoints of the elements and outnumber the elements by one along each axis. For example, if `resolution=[2, 3, 5]`, there are $2 \times 3 \times 5 = 30$ elements and $3 \times 4 \times 6 = 72$ vertices.
+
+Constrains and loads are defined on the vertices and must follow the vertex numbering. The mask and solution results are defined on the elements and follow the element numbering.
+
 ## Element Stiffness Matrix Cache
 
 The element stiffness matrix is automatically cached in`element_stiffness_matrices/` on the first time you solve a problem by default. In subsequent calculations, this matrix will be automatically loaded to save time. When you use new materials (with new Young's modulus `E` or Poisson's ratio `nu`), or calculate problems in different dimensions, the matrix needs to be recalculated.
