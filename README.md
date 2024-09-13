@@ -75,3 +75,10 @@ Note that since the `resolution` passed into `get_fixed`, `get_load`, and `get_m
 The element stiffness matrix is automatically cached in`element_stiffness_matrices/` on the first time you solve a problem by default. In subsequent calculations, this matrix will be automatically loaded to save time. When you use new materials (with new [Young's modulus](https://en.wikipedia.org/wiki/Young%27s_modulus) `E` or [Poisson's ratio](https://en.wikipedia.org/wiki/Poisson%27s_ratio) `nu`), or calculate problems in different dimensions, the matrix needs to be recalculated.
 
 You can disable this behavior by using the `skip_calculating_element_stiffness_matrix_if_exists=False` option. You can also use the `element_stiffness_matrix_file_dir` option to specify the location where the matrix is stored or to be stored.
+
+## Reference
+
+This project referenced the following projects during development:
+
+1. [ToPy](https://github.com/williamhunter/topy)
+2. [topopt2D](https://github.com/worbit/topopt2D/tree/master)
