@@ -55,9 +55,17 @@ We notice that in the first case, it tries to use arch-like or catenary structur
 
 ## The Numbering of Vertices and Elements
 
+To solve a problem, you need to construct one or more of the functions `get_fixed`, `get_load`, and `get_mask`, which are used to set constraints, loads, and masks. In these functions, you need to return an array to inform the program which degrees of freedom are fixed, which vertices are subjected to external forces in which directions, and which elements must be left empty without allowing material placement.
+
 The finite element method (FEM) solution domain is composed of a series of square/cubic/hypercubic elements with edge lengths of 1, and the number of elements is the product of the entries in the `resolution`. The vertices are the endpoints of the elements and outnumber the elements by one along each axis. For example, if `resolution = [2, 3, 5]`, there are $2 \times 3 \times 5 = 30$ elements and $3 \times 4 \times 6 = 72$ vertices.
 
 Constrains and loads are defined on the vertices and must follow the vertex numbering. The mask and solution results are defined on the elements and follow the element numbering.
+
+Generally, you don't need to pay too much attention to numbering. Both `get_fixed` and `get_load` accept the parameters `resolution`, `ndof`, and `coordinates`, while `get_mask` accepts `resolution`, `number_of_cells`, and `coordinates`. In most cases, you can easily construct the constraints, loads, and masks you want using this information. A typical approach is to use `coordinates` to construct a boolean array to select which items of the NumPy array to manipulate, as demonstrated in `tests\test_3d_mask.py`.
+
+When you need to find the indices of vertices on the edges or faces of the solution domain (rectangle, cuboid, or hypercuboid), you can easily achieve this using `tooppy.get_indices_on_boundary_elements(resolution, axis_selection)`. For example, if you want to select the leftmost column in a $5 \times 5$ grid, you can write `tooppy.get_indices_on_boundary_elements([5, 5], [[True, False], None])`. `[[True, False], None]` means selecting the start point but not the end point on the first axis, and selecting all on the second axis. If you want to select the two faces of a cuboid along the positive and negative Y directions, your `axis_selection` should be written as `[None, [True, True], None]`. If you want the four edges in the Z direction of a cuboid, you would write `[[True, True], [True, True], None]`.
+
+Note that since the `resolution` passed into `get_fixed`, `get_load`, and `get_mask` represents the size of the element array, when you try to obtain the vertex indices instead of the element indices—specifically when writing the content of `get_fixed` and `get_load`—you must manually add one to each entry of `resolution` before passing it into `get_indices_on_boundary_elements`.
 
 ## Element Stiffness Matrix Cache
 
