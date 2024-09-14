@@ -1,3 +1,5 @@
+![logo](README.assets/logo.png)
+
 # tooppy
 
 [English version](README.md)

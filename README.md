@@ -1,3 +1,5 @@
+![logo](README.assets/logo.png)
+
 # tooppy
 
 [中文版](README_zh-cn.md)
