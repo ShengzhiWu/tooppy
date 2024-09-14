@@ -56,7 +56,7 @@ We aim to find 2D structures that are highly resistant to compression, shear or 
 
 We notice that in the first case, it tries to use arch-like or catenary structures to increase stiffness under pressure, while also attempting to use tree-like structures to save material. You can see similar structures in Antoni Gaudí's famous masonry building, the [Sagrada Família](https://en.wikipedia.org/wiki/Sagrada_Fam%C3%ADlia). See the picture.
 
-<img src="README.assets/Sagrada_Família.jpg" alt="Sagrada_Família" style="zoom:25%;" />
+<img src="README.assets/Sagrada_Família.jpg" alt="Sagrada_Família" />
 
 ## The Numbering of Vertices and Elements
 

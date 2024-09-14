@@ -56,7 +56,7 @@ tooppy另一个强大的特性是mask。用户可以指定一些区域，禁止�
 
 在第一幅子图中，我们注意到其尝试用拱形或悬链线形结构来增大压力下的刚性，同时尝试使用树状结构节省材料。你可以在安东尼奥·高迪的著名砌体建筑[圣家族大教堂](https://baike.baidu.com/item/%E5%9C%A3%E5%AE%B6%E6%97%8F%E5%A4%A7%E6%95%99%E5%A0%82)中见到类似结构。见下图。
 
-<img src="README.assets/Sagrada_Família.jpg" alt="Sagrada_Família" style="zoom:25%;" />
+<img src="README.assets/Sagrada_Família.jpg" alt="Sagrada_Família" />
 
 ## The Numbering of Vertices and Elements
 
