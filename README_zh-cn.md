@@ -81,7 +81,7 @@ tooppy另一个强大的特性是mask。用户可以指定一些区域，禁止�
 ## 下一步的工作
 
 1. 根据几何元素（线段、圆等）生成点编号
-2. 导出.stl`文件
+2. 导出`.stl`文件
 3. 在README中添加关于`tooppy.get_indices_on_boundary_elements`的例子
 
 ## 引用
