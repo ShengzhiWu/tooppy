@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="tooppy",
-    version="1.2.0",
+    version="2.0.0",
     author="Shengzhi Wu",
     author_email="e1124755@u.nus.edu",
     description="A topological optimization library for python 3",

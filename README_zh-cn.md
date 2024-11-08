@@ -32,6 +32,10 @@ pip install tooppy
 
 <img src="README.assets/result_3d_0.png" alt="result_3d_0" style="zoom:67%;" />
 
+你可以将三维数组转化为网格并导出为STL文件。见`tests\conver_to_mesh.py`。
+
+<img src="README.assets/result_3d_mesh_0.png" alt="result_3d_mesh_0" style="zoom:67%;" />
+
 ### 多种负载
 
 tooppy支持求解在多种受力状态下都坚固的结构。以下例子设计一个结构，在四个角固定，中间可能承受X、Y、Z三种方向的负载，要求在三种负载下都坚固。注意，此处因为可能有水平方向的负载，不能再使用之前的可滑动的支撑。这里的支撑全部是完全固定的。这里所有的支撑都是完全固定的。见`tests\test_3d_multiload.py`。
@@ -81,7 +85,6 @@ tooppy另一个强大的特性是mask。用户可以指定一些区域，禁止�
 ## 下一步的工作
 
 1. 根据几何元素（线段、圆等）生成点编号
-2. 导出`.stl`文件
 3. 在README中添加关于`tooppy.get_indices_on_boundary_elements`的例子
 
 ## 引用

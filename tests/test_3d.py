@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from tooppy import solve, get_indices_on_face, visualize_3d_array
+from tooppy import solve, get_indices_on_face, mirror, plot_3d_array
 
 def get_fixed(resolution, ndof, coordinates):  # Constrains
     fixed = [ndof - 1]  # Fix the 4 corners on Z direction
@@ -31,13 +31,13 @@ result = solve(get_fixed,
                rmin,
                ft,
                iterations=50,
-            #    intermediate_results_saving_path='./intermediates/'
+               #    intermediate_results_saving_path='./intermediates/'
                )
 
 # Save result
 result_saving_path = './output/'
 if not os.path.exists(result_saving_path):
     os.makedirs(result_saving_path)
-np.save(result_saving_path + 'result_3d.npy', result)
+np.save(result_saving_path + 'result_3d.npy', mirror(result, mirror_x=True, mirror_y=True))
 
-visualize_3d_array(result, mirror_x=True, mirror_y=True)
+plot_3d_array(result, mirror_x=True, mirror_y=True)

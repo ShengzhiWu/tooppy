@@ -8,7 +8,7 @@ import itertools
 import os
 import pyvista
 
-__version__ = "1.2.0"
+__version__ = "2.0.0"
 
 def get_M_n(d:int, n:int, E=1, nu=1/3):
     return E / (1-(n - 1) * nu - (d - n) * n / (1 - max(0, d - n - 1) * nu) * nu ** 2)
@@ -306,38 +306,44 @@ def get_indices_on_face(resolution, axis, start=False, end=False):
     
     return get_indices_on_boundary_elements(resolution, axis_selection)
 
-def mirrow_first_axis(a):
-    shape = list(a.shape)
+def mirrow_first_axis(array):
+    shape = list(array.shape)
     shape[0] *= 2
-    result = np.zeros(shape, dtype=a.dtype)
-    result[:a.shape[0]] = a[::-1]
-    result[a.shape[0]:] = a
+    result = np.zeros(shape, dtype=array.dtype)
+    result[:array.shape[0]] = array[::-1]
+    result[array.shape[0]:] = array
     return result
 
-def visualize_3d_array(a,
-                       mirror_x=False,
-                       mirror_y=False,
-                       mirror_z=False,
-                       volume_quality=5,
-                       additional_meshes=[]):  # Visualize the result with pyvista
+def mirror(array,
+           mirror_x=False,
+           mirror_y=False,
+           mirror_z=False):
     if mirror_x:
-        a = mirrow_first_axis(a)
-    a = np.transpose(a, [1, 2, 0])
+        array = mirrow_first_axis(array)
+    array = np.transpose(array, [1, 2, 0])
     if mirror_y:
-        a = mirrow_first_axis(a)
-    a = np.transpose(a, [1, 2, 0])
+        array = mirrow_first_axis(array)
+    array = np.transpose(array, [1, 2, 0])
     if mirror_z:
-        a = mirrow_first_axis(a)
-    a = np.transpose(a, [1, 2, 0])
+        array = mirrow_first_axis(array)
+    array = np.transpose(array, [1, 2, 0])
+
+    return array
+
+def plot_3d_array(array,
+                  mirror_x=False,
+                  mirror_y=False,
+                  mirror_z=False,
+                  volume_quality=5,
+                  additional_meshes=[]):  # Visualize the result with pyvista
+    array = mirror(array, mirror_x=mirror_x, mirror_y=mirror_y, mirror_z=mirror_z)
 
     plotter = pyvista.Plotter()
 
     grid = pyvista.ImageData()
-    grid.dimensions = np.array(a.shape) + 1
+    grid.dimensions = np.array(array.shape) + 1
     grid.spacing = [volume_quality] * 3
-    grid.cell_data["values"] = a.flatten(order="F")
-
-    # grid.plot(volume=True, opacity=[0, 1, 1], cmap='magma', notebook=False)
+    grid.cell_data["values"] = array.flatten(order="F")
 
     plotter.add_volume(grid, opacity=[0, 1, 1], cmap='magma')
 
