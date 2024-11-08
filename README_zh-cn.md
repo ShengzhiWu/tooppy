@@ -78,6 +78,12 @@ tooppy另一个强大的特性是mask。用户可以指定一些区域，禁止�
 
 默认情况下，当你第一次求解问题时，元素刚性矩阵会自动缓存在`element_stiffness_matrices/`.。在之后的计算中，这个矩阵会被自动加载以节省时间。当你使用新的材料（新的[杨氏模量](https://baike.baidu.com/item/%E6%9D%A8%E6%B0%8F%E6%A8%A1%E9%87%8F)`E`或[泊松比](https://baike.baidu.com/item/%E6%B3%8A%E6%9D%BE%E6%AF%94)`nu`），或计算不同维数的问题，需要重新计算这个矩阵。你可以使用`skip_calculating_element_stiffness_matrix_if_exists=False`选项来禁止这一行为。你也可以使用`element_stiffness_matrix_file_dir`选项来设置矩阵的存放位置。
 
+## 下一步的工作
+
+1. 根据几何元素（线段、圆等）生成点编号
+2. 导出.stl`文件
+3. 在README中添加关于`tooppy.get_indices_on_boundary_elements`的例子
+
 ## 引用
 
 此项目在开发过程中参考了如下项目和代码：

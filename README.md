@@ -80,6 +80,12 @@ The element stiffness matrix is automatically cached in`element_stiffness_matric
 
 You can disable this behavior by using the `skip_calculating_element_stiffness_matrix_if_exists=False` option. You can also use the `element_stiffness_matrix_file_dir` option to specify the location where the matrix is stored or to be stored.
 
+## TODO
+
+1. Generate incidents based on geometry elements (lines, circles, etc.)
+2. Export `.stl` file
+3. New example about `tooppy.get_indices_on_boundary_elements` in README
+
 ## Reference
 
 This project referenced the following projects during development:
