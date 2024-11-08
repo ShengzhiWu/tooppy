@@ -64,7 +64,7 @@ tooppy另一个强大的特性是mask。用户可以指定一些区域，禁止�
 
 <img src="README.assets/Sagrada_Família.jpg" alt="Sagrada_Família" />
 
-## The Numbering of Vertices and Elements
+## 点和元素的编号
 
 要求解问题，你需要构造的用于设定约束、负载、mask的函数`get_fixed`、`get_load`和`get_mask`中的一个或多个。在这些函数中你需要返回一个数组来告知程序哪些自由度是被固定的、哪些顶点在什么方向上受外力、哪些元素必须空出来，不允许放置材料。
 
