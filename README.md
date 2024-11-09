@@ -87,7 +87,8 @@ You can disable this behavior by using the `skip_calculating_element_stiffness_m
 ## TODO
 
 1. Generate incidents based on geometry elements (lines, circles, etc.)
-3. New example about `tooppy.get_indices_on_boundary_elements` in README
+2. New example about `tooppy.get_indices_on_boundary_elements` in README
+3. Animation generating
 
 ## Reference
 
