@@ -36,6 +36,8 @@ pip install tooppy
 
 <img src="README.assets/result_3d_mesh_0.png" alt="result_3d_mesh_0" style="zoom:67%;" />
 
+tooppy提供了用于计算网格**体积**、**质心**以及**惯性张量**的方法。详见tests/get_geometric_information.py`。
+
 ### 多种负载
 
 tooppy支持求解在多种受力状态下都坚固的结构。以下例子设计一个结构，在四个角固定，中间可能承受X、Y、Z三种方向的负载，要求在三种负载下都坚固。注意，此处因为可能有水平方向的负载，不能再使用之前的可滑动的支撑。这里的支撑全部是完全固定的。这里所有的支撑都是完全固定的。见`tests\test_3d_multiload.py`。
@@ -87,7 +89,6 @@ tooppy另一个强大的特性是mask。用户可以指定一些区域，禁止�
 1. 根据几何元素（线段、圆等）生成点编号
 2. 在README中添加关于`tooppy.get_indices_on_boundary_elements`的例子
 3. 生成动画
-4. 质心、体积、二阶矩的计算
 
 ## 引用
 

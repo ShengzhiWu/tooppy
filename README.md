@@ -36,6 +36,8 @@ You can conver the 3D array to a mesh and save it as an STL file. See `tests\con
 
 <img src="README.assets/result_3d_mesh_0.png" alt="result_3d_mesh_0" style="zoom:67%;" />
 
+tooppy provids methods for calculating **volume**, **centroid** and **inertia tensor** of meshes. See `tests/get_geometric_information.py` for details.
+
 ### Multiple Loads
 
 tooppy supports solving for structures that are robust under multiple load conditions. The following example designs a structure with 4 fixed corners, where the center may be subjected to loads in the X, Y, and Z directions, requiring robustness under all three load conditions. Note that, since there may be horizontal loads, the previously used slidable supports can no longer be applied. All supports here are fully fixed. See `tests\test_3d_multiload.py`.
@@ -89,7 +91,6 @@ You can disable this behavior by using the `skip_calculating_element_stiffness_m
 1. Generate incidents based on geometry elements (lines, circles, etc.)
 2. New example about `tooppy.get_indices_on_boundary_elements` in README
 3. Animation generating
-4. Calculation of centroid, volume and secondary moment
 
 ## Reference
 

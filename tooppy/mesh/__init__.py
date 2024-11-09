@@ -49,7 +49,20 @@ def convert_to_mesh(array,
 def get_points(mesh):
     return mesh.points
 
-def get_faces(mesh):  # Get faces. This function is expensive.
+def get_faces(mesh):  # Get faces. The result is a list of lists of integers. This function is expensive if the mesh contains faces of different numbers of sides.
+    # If all faces are triangles, can get faces efficiently.
+    if len(mesh.faces) % 4 == 0:
+        faces = np.array(mesh.faces).reshape([-1, 4])
+        if np.min(faces[:, 0] == 3) == 1:
+            return faces[:, 1:]
+    
+    # If all faces are quadrangles, can get faces efficiently.
+    if len(mesh.faces) % 5 == 0:
+        faces = np.array(mesh.faces).reshape([-1, 5])
+        if np.min(faces[:, 0] == 4) == 1:
+            return faces[:, 1:]
+
+    # General case. Slow.
     faces = []
     i = 0
     while i < len(mesh.faces):
@@ -65,7 +78,86 @@ def construct_mesh(points, faces):
         faces_for_pyvista.append(len(face))
         faces_for_pyvista.extend(face)
 
-    return pyvista.PolyData(points, faces_for_pyvista)
+    return pyvista.PolyData(np.array(points, dtype=float), faces_for_pyvista)
+
+# Calculate integration of 1, x, y, z, x ** 2, y ** 2, z ** 2, x * y, x * z, y * z over the region enclosed by the mesh.
+def integrate(mesh):
+    m = np.array([[1 / 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                  [0, 1 / 24, 0, 0, 1 / 24, 0, 0, 1 / 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                  [0, 0, 1 / 24, 0, 0, 1 / 24, 0, 0, 1 / 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                  [0, 0, 0, 1 / 24, 0, 0, 1 / 24, 0, 0, 1 / 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 60, 0, 0, 1 / 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 0, 0, 0],
+                  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 60, 0, 0, 1 / 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 60, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0],
+                  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 60, 0, 0, 1 / 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 60, 0, 0, 0, 0, 0, 1 / 60],
+                  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 120, 0, 0, 1 / 120, 0, 0, 0, 1 / 120, 0, 0, 1 / 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 120, 0, 0, 0, 1 / 120, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 0, 0],
+                  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 120, 0, 0, 1 / 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 120, 0, 0, 1 / 120, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 120, 0, 0, 0, 0, 0, 0, 1 / 120, 0, 0, 0, 0, 1 / 60, 0, 0, 0],
+                  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 120, 0, 0, 1 / 120, 0, 0, 1 / 120, 0, 0, 1 / 120, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 60, 0, 0, 1 / 120, 0, 0, 1 / 120, 0, 0, 0, 0, 0, 1 / 60, 0]])  # 系数矩阵
+    points = get_points(mesh)
+    faces = get_faces(mesh)
+
+    if hasattr(faces, 'shape'):  # All faces have same number of sides.
+        triangles = np.concatenate([faces[:, [0] + [i + 1, i + 2]] for i in range(faces.shape[1] - 2)])
+    else:  # The mesh contains faces of different numbers of sides. Slow.
+        triangles = []
+        for face in faces:
+            for i in range(len(face) - 2):
+                triangles.append(face[[0] + [i + 1, i + 2]])
+        triangles = np.array(triangles)
+    
+    a = points[triangles]
+    det = np.linalg.det(a)
+    a = a.reshape([a.shape[0], -1])
+    a = a.T
+    a = np.concatenate([np.ones_like(a[[0]]), a])
+    b = []
+    for i in range(a.shape[0]):
+        for j in range(i, a.shape[0]):
+            b.append(a[i] * a[j])
+    b = np.array(b)
+    b = m @ b
+    b *= det
+    b = np.sum(b, axis=-1)
+
+    return b
+
+def _move_m_matrix(stiffness, move):
+    stiffness = np.array(stiffness)
+    move_matrix = np.array([[0, move[2], -move[1]],
+                            [-move[2], 0, move[0]],
+                            [move[1], -move[0], 0]], dtype=np.float32)
+    stiffness[3:, 3:] += move_matrix.T@stiffness[:3, :3]@move_matrix+move_matrix.T@stiffness[:3, 3:]+stiffness[3:, :3]@move_matrix
+    stiffness[:3, 3:] += stiffness[:3, :3]@move_matrix
+    stiffness[3:, :3] += move_matrix.T@stiffness[:3, :3]
+    return stiffness
+
+def _get_inertia_of_point(location, dtype=np.float32):
+    m = np.zeros([6, 6], dtype=dtype)
+    m[:3, :3] = np.eye(3)
+    return _move_m_matrix(m, location)
+
+# Calculate volume, centroid and inertia tensor of a mesh.
+def get_geometric_information(mesh):
+    integration = integrate(mesh)
+    volume, x_i, y_i, z_i, xx_i, yy_i, zz_i, xy_i, xz_i, yz_i = integration
+    centroid = integration[1:4] / volume
+    I_absolute = np.array([
+            [yy_i + zz_i, -xy_i, -xz_i],
+            [-xy_i, xx_i + zz_i, -yz_i],
+            [-xz_i, -yz_i, xx_i + yy_i]
+        ])
+    m_point = _get_inertia_of_point(centroid) * volume
+    I = I_absolute - m_point[3:, 3:]
+    m = np.zeros([6, 6], dtype=float)
+    m[:3, :3] = np.eye(3) * volume
+    m[3:, 3:] = I
+    m = _move_m_matrix(m, centroid)
+    return {
+        'volume': volume,
+        'centroid': centroid,
+        'inertia': I,  # Inertia relative to its centroid
+        'inertia_absolute': I_absolute,  # Inertia relative to origin
+        'm_matrix': m  # The 6 * 6 mass matrix M. Let v = [v_x, v_y, v_z, w_x, w_y, w_z] be the generalized velocity of the rigid body. Then its kinetic energy equals to v.T @ M @ v / 2.
+        }
 
 def plot_mesh(mesh,
               colored_through_axis=0,
