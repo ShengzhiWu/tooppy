@@ -10,7 +10,9 @@ def convert_to_mesh(array,
                     sharpen_strength: float=3,
                     sharpen_radius: float=4,
                     smoothen_radius: float=1.2,
-                    iso=0.37):
+                    iso=0.37,
+                    method='flying_edges'  # 'flying_edges' or 'marching_cubes'
+                    ):
     assert len(array.shape) == 3
 
     if pad > 0:
@@ -33,7 +35,7 @@ def convert_to_mesh(array,
     grid.dimensions = np.array(array.shape)
     # grid.origin = (0, 0, 0)  # The bottom left corner of the data set
 
-    mesh = grid.contour([iso], array.flatten(order="F"), method='flying_edges')  # 其他常用的method还有'marching_cubes'，二者没有明显区别
+    mesh = grid.contour([iso], array.flatten(order="F"), method=method)
 
     return mesh
 

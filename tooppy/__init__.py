@@ -8,7 +8,7 @@ import itertools
 import os
 import pyvista
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 def get_M_n(d:int, n:int, E=1, nu=1/3):
     return E / (1-(n - 1) * nu - (d - n) * n / (1 - max(0, d - n - 1) * nu) * nu ** 2)
@@ -330,15 +330,17 @@ def mirror(array,
 
     return array
 
+# Visualize the result with pyvista
 def plot_3d_array(array,
                   mirror_x=False,
                   mirror_y=False,
                   mirror_z=False,
                   volume_quality=5,
-                  additional_meshes=[]):  # Visualize the result with pyvista
+                  additional_meshes=[],
+                  notebook=False):
     array = mirror(array, mirror_x=mirror_x, mirror_y=mirror_y, mirror_z=mirror_z)
 
-    plotter = pyvista.Plotter()
+    plotter = pyvista.Plotter(notebook=notebook)
 
     grid = pyvista.ImageData()
     grid.dimensions = np.array(array.shape) + 1
