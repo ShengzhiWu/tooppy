@@ -3,15 +3,18 @@ from scipy.ndimage import zoom
 from scipy.ndimage import gaussian_filter
 import pyvista
 
+# Convert an 3d volume data, containing values in 0~1, to a pyvista mesh. 0 means empty and 1 means material there.
+# The result is approximatelly in the box [0, array.shape[0]] × [0, array.shape[1]] × [0, array.shape[2]] in 3d space.
+# If the input array has big values on boundary, the output mesh may slightly over the box.
 def convert_to_mesh(array,
-                    pad: int=2,
-                    upsample_factor: float=2,
-                    upsample_order: int=3,
-                    sharpen_strength: float=3,
-                    sharpen_radius: float=4,
-                    smoothen_radius: float=1.2,
-                    iso=0.37,
-                    method='flying_edges'  # 'flying_edges' or 'marching_cubes'
+                    pad: int=2,  # Padding the input volume data. Unit: pixel.
+                    upsample_factor: float=2,  # Typical value: 1~3. Higher value for more detailed meshes.
+                    upsample_order: int=3,  # Order of interpolation. Typical value: 1~3.
+                    sharpen_strength: float=3,  # Typical value: 0~10. Higher value for more uniform structures.The results of topology optimization may contain thin structures, which are usually impractical for manufacturing. Increasing this parameter will thicken originally thin structures and thin out originally thick ones, making the overall structure more uniform. Too high value causes deviation from the original optimized structure thereby reduces the structural performance.
+                    sharpen_radius: float=4,  # Unit: pixel.
+                    smoothen_radius: float=1.2,  # Unit: pixel. Higher value for 
+                    iso=0.37,  # Value of the isosurface. Typical value: 0~1. Higher value for thicker results.
+                    method='flying_edges'  # Method for calculating isosurface. Can be 'flying_edges' or 'marching_cubes'.
                     ):
     assert len(array.shape) == 3
 
