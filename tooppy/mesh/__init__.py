@@ -37,6 +37,10 @@ def convert_to_mesh(array,
 
     mesh = grid.contour([iso], array.flatten(order="F"), method=method)
 
+    # Scale and move the mesh to match the input array.
+    mesh.points /= upsample_factor
+    mesh.points -= pad
+
     return mesh
 
 def get_points(mesh):
@@ -61,11 +65,11 @@ def construct_mesh(points, faces):
     return pyvista.PolyData(points, faces_for_pyvista)
 
 def plot_mesh(mesh,
-         colored_through_axis=0,
-         smooth_shading=True,
-         specular=1,  # 0 ~ 1
-         cmap="plasma",
-         notebook=False):
+              colored_through_axis=0,
+              smooth_shading=True,
+              specular=1,  # 0 ~ 1
+              cmap="plasma",
+              notebook=False):
     if colored_through_axis is None:
         mesh.plot(smooth_shading=smooth_shading, specular=specular, cmap=cmap, show_scalar_bar=False, notebook=notebook)
     else:
