@@ -160,15 +160,22 @@ def get_geometric_information(mesh):
         }
 
 def plot_mesh(mesh,
-              colored_through_axis=0,
+              show_axes=True,
+              show_edges=False,
+              scalars=None,  # Color the mesh with a 1d float array with length equals to len(mesh.points).
+              colored_along_axis=0,  # Color the mesh based on the coordinates along a specific axis. Can be None, 0, 1 or 2. Set None to disable this feature. Valid when scalars=None.
+              cmap="plasma",
+              color='lightblue',  # Valid when scalars=None and colored_through_axis=None.
               smooth_shading=True,
               specular=1,  # 0 ~ 1
-              cmap="plasma",
-              notebook=False):
-    if colored_through_axis is None:
-        mesh.plot(smooth_shading=smooth_shading, specular=specular, cmap=cmap, show_scalar_bar=False, notebook=notebook)
+              notebook=False  # Whether display in notebook mode. If False, display in a new window.
+              ):
+    if not scalars is None:
+        mesh.plot(show_axes=show_axes, show_edges=show_edges, scalars=scalars, smooth_shading=smooth_shading, specular=specular, cmap=cmap, show_scalar_bar=False, notebook=notebook)
+    elif not colored_along_axis is None:
+        mesh.plot(show_axes=show_axes, show_edges=show_edges, scalars=mesh.points[:, colored_along_axis], smooth_shading=smooth_shading, specular=specular, cmap=cmap, show_scalar_bar=False, notebook=notebook)
     else:
-        mesh.plot(scalars=mesh.points[:, colored_through_axis], smooth_shading=smooth_shading, specular=specular, cmap=cmap, show_scalar_bar=False, notebook=notebook)
+        mesh.plot(show_axes=show_axes, show_edges=show_edges, color=color, smooth_shading=smooth_shading, specular=specular, cmap=cmap, show_scalar_bar=False, notebook=notebook)
 
 def load_mesh(file):  # Load mesh from file. STL, OBJ, PLY, VTK and VTU files are supported.
     return pyvista.read(file)
