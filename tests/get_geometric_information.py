@@ -18,3 +18,5 @@ print('Volume of ball =', information['volume'])
 print('Ground truth =', 4 / 3 * np.pi * 1 ** 3)
 print('Inertia of ball =', np.diag(information['inertia']))
 print('Ground truth =', 2 / 5 * 4 / 3 * np.pi * 1 ** 5)
+
+# You can also use tooppy.mesh.load_mesh load mesh from files and analyze them.

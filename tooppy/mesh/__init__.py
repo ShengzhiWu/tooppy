@@ -170,5 +170,8 @@ def plot_mesh(mesh,
     else:
         mesh.plot(scalars=mesh.points[:, colored_through_axis], smooth_shading=smooth_shading, specular=specular, cmap=cmap, show_scalar_bar=False, notebook=notebook)
 
-def save_mesh(mesh, file):
+def load_mesh(file):  # Load mesh from file. STL, OBJ, PLY, VTK and VTU files are supported.
+    return pyvista.read(file)
+
+def save_mesh(mesh, file):  # Save mesh as a file. STL, OBJ, PLY, VTK, VTU, VTP, GLB and PVD files are supported.
     mesh.save(file)
