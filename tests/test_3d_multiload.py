@@ -2,7 +2,7 @@
 
 import numpy as np
 import os
-from tooppy import solve, get_indices_on_boundary_elements, visualize_3d_array
+from tooppy import solve, get_indices_on_boundary_elements, plot_3d_array
 
 def get_fixed(resolution, ndof, coordinates):  # Constrains
     # dofs = np.arange(ndof)
@@ -56,4 +56,4 @@ if not os.path.exists(result_saving_path):
     os.makedirs(result_saving_path)
 np.save(result_saving_path + 'result_3d.npy', result)
 
-visualize_3d_array(result)
+plot_3d_array(result)

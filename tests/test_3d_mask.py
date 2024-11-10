@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import pyvista
-from tooppy import solve, get_indices_on_face, visualize_3d_array
+from tooppy import solve, get_indices_on_face, plot_3d_array
 
 def get_fixed(resolution, ndof, coordinates):  # Constrains
     fixed = [ndof - 1]  # Fix the 4 corners on Z direction
@@ -61,4 +61,4 @@ additional_meshes = [
                                       height=10)
 ]
 
-visualize_3d_array(result, mirror_x=True, mirror_y=True, additional_meshes=additional_meshes)
+plot_3d_array(result, mirror_x=True, mirror_y=True, additional_meshes=additional_meshes)
