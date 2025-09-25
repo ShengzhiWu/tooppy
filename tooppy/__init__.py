@@ -110,7 +110,7 @@ def solve(
     get_fixed,
     get_load,
     resolution,
-    volfrac,
+    volume_fraction,
     penal,
     rmin,
     ft,
@@ -151,7 +151,7 @@ def solve(
         mask = None
     
     # Allocate design variables (as array), initialize and allocate sens.
-    x = volfrac / (1 if mask is None else np.mean(mask)) * np.ones(np.prod(resolution), dtype=float)
+    x = volume_fraction / (1 if mask is None else np.mean(mask)) * np.ones(np.prod(resolution), dtype=float)
     if initial_noise_strength != 0:
         x += (np.random.rand(np.prod(resolution)) * 2 - 1) * initial_noise_strength
     if not mask is None:

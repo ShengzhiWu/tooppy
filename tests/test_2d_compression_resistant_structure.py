@@ -17,7 +17,7 @@ def get_load(resolution, ndof, coordinates):  # Load
 
 # Default input parameters
 resolution = [80, 100]
-volfrac = 0.2  # Volume fraction
+volume_fraction = 0.2  # Volume fraction
 rmin = 1.5  # Larger values for more smooth results.
 penal = [1.5, 3.5]
 ft = 1  # 0: sens, 1: dens
@@ -25,7 +25,7 @@ ft = 1  # 0: sens, 1: dens
 result = solve(get_fixed,
                get_load,
                resolution,
-               volfrac,
+               volume_fraction,
                penal,
                rmin,
                ft,

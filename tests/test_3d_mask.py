@@ -29,12 +29,12 @@ def get_mask(resolution, number_of_cells, coordinates):  # Mask, a boolean array
 
 # Default input parameters
 resolution = [20, 20, 10]  # [30, 30, 10]
-volfrac = 0.05  # volume fraction
+volume_fraction = 0.05  # volume fraction
 rmin = 1.5
 penal = 3.0
 ft = 1  # 0: sens, 1: dens
 
-result = solve(get_fixed, get_load, resolution, volfrac, penal, rmin, ft, get_mask=get_mask, iterations=50)  # 50
+result = solve(get_fixed, get_load, resolution, volume_fraction, penal, rmin, ft, get_mask=get_mask, iterations=50)  # 50
 
 # Save result
 result_saving_path = './output/'
