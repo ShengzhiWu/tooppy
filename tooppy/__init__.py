@@ -105,22 +105,24 @@ def optimality_criteria(x, dc, dv, g, mask=None):  # Used to update the design v
             l2 = lmid
     return (xnew, gt)
 
-def solve(get_fixed,
-          get_load,
-          resolution,
-          volfrac,
-          penal,
-          rmin,
-          ft,
-          E=1,
-          nu=1/3,
-          iterations=20,
-          get_mask=None,
-          change_threshold=0,
-          initial_noise_strength=0,
-          intermediate_results_saving_path=None,
-          element_stiffness_matrix_file_dir='./element_stiffness_matrices/',
-          skip_calculating_element_stiffness_matrix_if_exists=True):
+def solve(
+    get_fixed,
+    get_load,
+    resolution,
+    volfrac,
+    penal,
+    rmin,
+    ft,
+    E=1,
+    nu=1/3,
+    iterations=20,
+    get_mask=None,
+    change_threshold=0,
+    initial_noise_strength=0,
+    intermediate_results_saving_path=None,
+    element_stiffness_matrix_file_dir='./element_stiffness_matrices/',
+    skip_calculating_element_stiffness_matrix_if_exists=True
+):
 
     if not intermediate_results_saving_path is None:
         if not os.path.exists(intermediate_results_saving_path):
@@ -236,7 +238,7 @@ def solve(get_fixed,
         # print('time escaped in generating K =', time.time() - t_1)
         t_1 = time.time()
         
-        # Solve system 
+        # Solve system
         u[free, :] = np.reshape(spsolve(K, f[free]), [len(free), -1])
         # u[free, :] = np.reshape(cg(K, f[free])[0], [len(free), -1])
         # u[free, :] = np.reshape(minres(K, f[free])[0], [len(free), -1])
@@ -281,10 +283,12 @@ def solve(get_fixed,
         if not intermediate_results_saving_path is None:
             np.save(intermediate_results_saving_path + 'result_' + str(len(resolution)) + 'd_' + str(loop) + '.npy', xPhys.reshape(resolution))
         
-        print('iteration ', loop,
-              ', loss = ', obj,
-              ', change = ', change,
-              sep='')
+        print(
+            'iteration ', loop,
+            ', loss = ', obj,
+            ', change = ', change,
+            sep=''
+        )
     print('time escaped in main loop =', time.time() - t_0)
     
     return xPhys.reshape(resolution)
@@ -314,10 +318,12 @@ def mirrow_first_axis(array):
     result[array.shape[0]:] = array
     return result
 
-def mirror(array,
-           mirror_x=False,
-           mirror_y=False,
-           mirror_z=False):
+def mirror(
+    array,
+    mirror_x=False,
+    mirror_y=False,
+    mirror_z=False
+):
     if mirror_x:
         array = mirrow_first_axis(array)
     array = np.transpose(array, [1, 2, 0])
@@ -331,13 +337,15 @@ def mirror(array,
     return array
 
 # Visualize the result with pyvista
-def plot_3d_array(array,
-                  mirror_x=False,
-                  mirror_y=False,
-                  mirror_z=False,
-                  volume_quality=5,
-                  additional_meshes=[],
-                  notebook=False):
+def plot_3d_array(
+    array,
+    mirror_x=False,
+    mirror_y=False,
+    mirror_z=False,
+    volume_quality=5,
+    additional_meshes=[],
+    notebook=False
+):
     array = mirror(array, mirror_x=mirror_x, mirror_y=mirror_y, mirror_z=mirror_z)
 
     plotter = pyvista.Plotter(notebook=notebook)
