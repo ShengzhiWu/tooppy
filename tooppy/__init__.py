@@ -8,7 +8,7 @@ import itertools
 import os
 import pyvista
 
-__version__ = "2.5.0"
+__version__ = "2.6.0"
 
 def get_M_n(d:int, n:int, E=1, nu=1/3):
     return E / (1-(n - 1) * nu - (d - n) * n / (1 - max(0, d - n - 1) * nu) * nu ** 2)
@@ -22,6 +22,7 @@ def get_element_stiffness_matrix(E=1, nu=1/3, dimensional=2):
     C = np.zeros([dimensional + dimensional * (dimensional - 1) // 2] * 2)
     C[:dimensional, :dimensional] = np.eye(dimensional) * (M_1 * 2 - M_2) + np.ones([dimensional] * 2) * (M_2 - M_1)
     C[dimensional:, dimensional:] = np.eye(dimensional * (dimensional - 1) // 2) * G
+    C = C.tolist()  # For certain versions of NumPy, if this line of code is not executed, then C = Matrix(C) will throw an error
 
     C = Matrix(C)  # Constitutive (material property) matrix:
     
