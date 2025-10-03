@@ -19,20 +19,19 @@ def get_load(resolution, ndof, coordinates):  # Load
 # Default input parameters
 resolution = [80, 100]
 volume_fraction = 0.2  # Volume fraction
-rmin = 1.5  # Larger values for more smooth results.
-penal = [1.5, 3.5]
-ft = 1  # 0: sens, 1: dens
 
-result = solve(get_fixed,
-               get_load,
-               resolution,
-               volume_fraction,
-               penal,
-               rmin,
-               ft,
-               E=1,
-               nu=1/3,
-               iterations=100)
+result = solve(
+    get_fixed,
+    get_load,
+    resolution,
+    volume_fraction,
+    penal=[1.5, 3.5],
+    rmin=1.5,  # Larger values for more smooth results
+    ft=1,  # 0: sens, 1: dens
+    E=1,
+    nu=1/3,
+    iterations=100
+)
 
 # Save result
 result_saving_path = './output/'

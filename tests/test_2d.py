@@ -2,41 +2,38 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import os
-from tooppy import solve, get_indices_on_boundary_elements, mirrow_first_axis
+from tooppy import solve, mirrow_first_axis
 
 def get_fixed(resolution, ndof, coordinates):  # Constrains defined here
-    elements_on_mirror_plane = get_indices_on_boundary_elements(  # Indices of elements on the mirror plane (x = 0)
-        [e + 1 for e in resolution],
-        [[True, False], None]
-    )
+    x, y = coordinates
 
     # Define which DOFs are fixed
-    fixed = np.union1d(
-        [ndof - 1],  # Fix the last DOF of the lase element, which means the structure is supported by the ground here, while horizontal movement is allowed
-        elements_on_mirror_plane * 2  # We apply the mirror boundary conditions by fix the first DOF of each elements on the mirror plane
-    )
+    fixed = np.zeros((len(x), len(coordinates)), dtype=bool)
+    fixed[x == 0, 0] = True  # We apply the mirror boundary conditions by fix the first DOF of each elements on the mirror plane
+    fixed[np.logical_and(x == resolution[0], y == resolution[1]), 1] = True  # Fix the last DOF of the lase element, which means the structure is supported by the ground here, while horizontal movement is allowed
+    fixed = fixed.flatten()
+    fixed = np.arange(ndof, dtype=int)[fixed]
+
     return fixed
 
 def get_load(resolution, ndof, coordinates):  # Load (force) defined here
-    f = np.zeros(ndof)
-    f[1] = -1  # Load on Z direction on the first vertex
-    return f
+    x, y = coordinates
+    f = np.zeros((len(x), len(coordinates)))
+    f[np.logical_and(x == 0, y == 0), 1] = -1  # Load on Y direction on the first vertex
+    return  f.flatten()
 
 # Default input parameters
 resolution = [90, 30]
 volume_fraction = 0.4  # Volume fraction (target volume / solution domain volume)
-rmin = 3  # Larger values for more smooth results.
-penal = 3.0  # Punish density between 0 and 1
-ft = 1  # 0: sens, 1: dens
 
 result = solve(
     get_fixed,
     get_load,
     resolution,
     volume_fraction,
-    penal,
-    rmin,
-    ft,
+    penal=3.0,  # Punish density between 0 and 1
+    rmin=3,  # Larger values for more smooth results
+    ft=1,  # 0: sens, 1: dens
     E=1,
     nu=1/3,
     iterations=50

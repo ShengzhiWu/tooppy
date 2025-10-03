@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import spsolve  # , cg, minres
-# import pyamg
 import time
 from sympy import symbols, Matrix, diff, expand
 import itertools
@@ -13,11 +12,15 @@ __version__ = "2.6.0"
 def get_M_n(d:int, n:int, E=1, nu=1/3):
     return E / (1-(n - 1) * nu - (d - n) * n / (1 - max(0, d - n - 1) * nu) * nu ** 2)
 
-def get_element_stiffness_matrix(E=1, nu=1/3, dimensional=2):
+def get_element_stiffness_matrix(
+    E=1,  # Young's modulus
+    nu=1/3,  # Poisson's ratio
+    dimensional=2
+):
     dof = dimensional * 2 ** dimensional
     M_1 = get_M_n(dimensional, 1, E=E, nu=nu)
     M_2 = get_M_n(dimensional, 2, E=E, nu=nu)
-    G = E / (2 * (1 + nu))  # modulus of rigidity
+    G = E / (2 * (1 + nu))  # Modulus of rigidity
 
     C = np.zeros([dimensional + dimensional * (dimensional - 1) // 2] * 2)
     C[:dimensional, :dimensional] = np.eye(dimensional) * (M_1 * 2 - M_2) + np.ones([dimensional] * 2) * (M_2 - M_1)
@@ -55,7 +58,7 @@ def get_element_stiffness_matrix(E=1, nu=1/3, dimensional=2):
 
     dK = B.T * C * B
 
-    # Because dK is symmetric, only need to integrate about half of it. 
+    # Because dK is symmetric, only need to integrate about half of it.
     K = np.zeros([dof] * 2)
     for i in range(dof):
         for j in range(0, i + 1):
@@ -66,10 +69,10 @@ def get_element_stiffness_matrix(E=1, nu=1/3, dimensional=2):
     
     return K
 
-def get_smoothen_kernel(rmin, resolution):
-    iH  =  []
-    jH  =  []
-    sH  =  []
+def get_smoothen_kernel(rmin, resolution):  # Generate kernel for smoothing a field
+    iH = []
+    jH = []
+    sH = []
     for row, I in enumerate(itertools.product(*[range(e) for e in resolution])):
         KK1 = [int(np.maximum(i - (np.ceil(rmin) - 1), 0)) for i in I]
         KK2 = [int(np.minimum(i + np.ceil(rmin), nel)) for i, nel in zip(I, resolution)]
@@ -86,36 +89,41 @@ def get_smoothen_kernel(rmin, resolution):
     H /= Hs
     return H
     
-def optimality_criteria(x, dc, dv, g, mask=None):  # Used to update the design variables
-    # dc: Sensitivity of the compliance (objective function) with respect to the design variables.
-    # dv: Sensitivity of the volume with respect to the design variables.
-    # g: Constraint term used in the optimization.
-    
-    l1 = 0  # Bounds for the Lagrange multiplier
-    l2 = 1e9
+def optimality_criteria(  # Used for updating the design variables
+    x,  # Old value of the design variables
+    dc,  # Sensitivity of the compliance (objective function) with respect to the design variables
+    dv,  # Sensitivity of the volume with respect to the design variables
+    sum_target,
+    mask=None
+):
+    l_low = 0  # Bounds for the Lagrange multiplier
+    l_high = 1e9
     move = 0.2  # Maximum change allowed in the design variables in one iteration
-    while (l2 - l1) / (l1 + l2) > 1e-3:
-        lmid = 0.5 * (l2 + l1)
-        xnew =  np.maximum(0.0, np.maximum(x - move, np.minimum(1.0, np.minimum(x + move, x * np.sqrt(-dc / dv / lmid)))))
+    while (l_high - l_low) / (l_low + l_high) > 1e-3:
+        l_mid = 0.5 * (l_high + l_low)
+        x_new = np.clip(
+            x * np.sqrt(-dc / dv / l_mid),
+            np.maximum(0, x - move),
+            np.minimum(1, x + move)
+        )
         if not mask is None:
-            xnew[np.logical_not(mask)] = 0
-        gt = g + np.sum((dv * (xnew - x)))
-        if gt > 0 :
-            l1 = lmid
+            x_new[np.logical_not(mask)] = 0
+        if np.sum(x_new) > sum_target :
+            l_low = l_mid
         else:
-            l2 = lmid
-    return (xnew, gt)
+            l_high = l_mid
+    return x_new
 
 def solve(
-    get_fixed,
-    get_load,
+    get_fixed,  # Inputs resolution, outputs an array defining which dofs are fixed
+    get_load,  # Inputs resolution, outputs an array defining which dofs are applied force
     resolution,
-    volume_fraction,
-    penal,
-    rmin,
-    ft,
-    E=1,
-    nu=1/3,
+    volume_fraction,  # Volume fraction (target volume / solution domain volume)
+    penal=3.0,  # Punish density between 0 and 1. Min value is 1, which means no punishment. Can be of form float or [float, float] which defines start penal and end penal
+    rmin=1.5,  # Larger values for more smooth results
+    ft=1,  # 0: sens, 1: dens
+    E=1,  # Young's modulus
+    nu=1 / 3,  # Poisson's ratio
     iterations=20,
     get_mask=None,
     change_threshold=0,
@@ -124,7 +132,6 @@ def solve(
     element_stiffness_matrix_file_dir='./element_stiffness_matrices/',
     skip_calculating_element_stiffness_matrix_if_exists=True
 ):
-
     if not intermediate_results_saving_path is None:
         if not os.path.exists(intermediate_results_saving_path):
             os.makedirs(intermediate_results_saving_path)
@@ -141,7 +148,7 @@ def solve(
         penal = [penal] * 2
     
     # Set mask
-    if not get_mask is None:
+    if callable(get_mask):
         # Calculate location of vertices
         slices = [slice(0, e) for e in resolution]
         coordinates = np.mgrid[slices]
@@ -220,7 +227,6 @@ def solve(
     t_0 = time.time()
     loop = 0
     change = 1
-    g = 0  # A constraint or a measure related to the volume of the design
     penal_iter = iter(np.linspace(penal[0], penal[1], iterations))
     while change > change_threshold and loop < iterations:
         loop += 1
@@ -258,7 +264,7 @@ def solve(
         dc = (-penal_in_iteration * xPhys ** (penal_in_iteration - 1) * (Emax - Emin)) * ce  # Ignore contribution of d ce /d obj
         dv = np.ones(np.prod(resolution))
         
-        # Sensitivity filtering:
+        # Sensitivity filtering
         if ft == 0:
             dc  =  np.asarray((H * (x * dc))[np.newaxis].T)[:, 0] / np.maximum(0.001, x)
         elif ft == 1:
@@ -267,7 +273,7 @@ def solve(
             
         # Optimality criteria (Update design variables)
         xold = x
-        (x, g) = optimality_criteria(x, dc, dv, g, mask=mask)
+        x = optimality_criteria(x, dc, dv, volume_fraction * np.prod(resolution), mask=mask)
 
         # print('time escaped in optimality criteria =', time.time() - t_1)
         t_1 = time.time()
